@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Anahi & el Rescate ARMY</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <div class="stage" id="stage">
+
+    <!-- ROTATE-DEVICE HINT (phones in portrait, only during gameplay) -->
+    <div id="rotate-hint" class="hidden">
+      <div class="rotate-icon">📱</div>
+      <p>Gira tu celular para jugar mejor 🔄</p>
+    </div>
+
+    <!-- MUSIC PLAYER (persists across all screens) -->
+    <div id="music-player">
+      <button id="music-toggle" title="Reproductor BTS">
+        <span class="mt-icon">🎧</span><span class="mt-text">Reproductor BTS</span>
+      </button>
+      <div id="music-panel" class="hidden">
+        <div class="music-header">
+          <span class="music-header-icon">💜</span>
+          <div>
+            <div class="music-title">Reproductor BTS</div>
+            <div class="music-sub">Reproduciendo</div>
+          </div>
+        </div>
+
+        <div id="music-fallback">
+          <p class="music-label">Playlist de Anahi <code>music/</code> Espero Te Guste</p>
+          <ul id="playlist-list"></ul>
+          <div class="playlist-nav">
+            <button id="btn-prev-song" class="btn secondary" title="Anterior">⏮</button>
+            <button id="btn-play-pause" class="btn" title="Reproducir/Pausar">▶️</button>
+            <button id="btn-next-song" class="btn secondary" title="Siguiente">⏭</button>
+          </div>
+          <div class="now-playing" id="now-playing"></div>
+          <audio id="playlist-audio"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- TITLE SCREEN -->
+    <div class="screen" id="screen-title">
+      <div class="stars"></div>
+      <div style="font-size:2.2rem; margin-bottom:6px;">💜</div>
+      <h1 class="title">Anahi</h1>
+      <p class="sub">Bangtan fue dispersado por los siete reinos del escenario. Salta, esquiva y corre por cada nivel para liberar a los miembros — y al final, alguien muy especial te está esperando.</p>
+
+      <div class="roster" id="roster-preview"></div>
+
+      <button class="btn" id="btn-start">Empezar aventura</button>
+
+      <div class="controls-hint">
+        <div class="key"><span class="keycap">← →</span>Moverte</div>
+        <div class="key"><span class="keycap">␣ / ↑</span>Saltar</div>
+        <div class="key"><span class="keycap">Enter</span>Continuar</div>
+      </div>
+    </div>
+
+    <!-- AVATAR CREATOR SCREEN -->
+    <div class="screen hidden" id="screen-avatar">
+      <div class="stars"></div>
+      <h1 class="title" style="font-size:clamp(1.3rem,3.6vw,2rem);">Crea tu avatar</h1>
+      <p class="sub">Así te verás rescatando a Bangtan. Elige lo que más se parezca a ti.</p>
+
+      <canvas id="avatar-preview" width="120" height="140" style="margin:6px 0 16px;"></canvas>
+
+      <div class="avatar-options">
+        <div class="opt-group">
+          <div class="opt-label">Piel</div>
+          <div class="swatch-row" id="swatch-skin"></div>
+        </div>
+        <div class="opt-group">
+          <div class="opt-label">Cabello</div>
+          <div class="swatch-row" id="swatch-hair"></div>
+        </div>
+        <div class="opt-group">
+          <div class="opt-label">Estilo de cabello</div>
+          <div class="swatch-row" id="style-hair"></div>
+        </div>
+        <div class="opt-group">
+          <div class="opt-label">Outfit</div>
+          <div class="swatch-row" id="swatch-outfit"></div>
+        </div>
+      </div>
+
+      <button class="btn" id="btn-avatar-done" style="margin-top:18px;">¡Lista, a jugar!</button>
+    </div>
+
+    <!-- LEVEL INTRO SCREEN -->
+    <div class="screen hidden" id="screen-level-intro">
+      <div class="stars"></div>
+      <div class="card">
+        <div class="song-tag" id="intro-eyebrow">NIVEL</div>
+        <div class="member-badge" id="intro-badge" style="width:64px;height:64px;font-size:1.1rem;">?</div>
+        <h1 class="title" id="intro-title" style="margin-top:10px;">—</h1>
+        <p class="sub" id="intro-sub">—</p>
+        <a class="song-link" id="intro-song-link" href="#" target="_blank" rel="noopener">🎵 Escuchar el tema oficial en YouTube</a>
+        <div class="progress-dots" id="progress-dots"></div>
+      </div>
+      <button class="btn" id="btn-play-level" style="margin-top:20px;">Jugar nivel</button>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-wrap" class="hidden">
+      <canvas id="game" width="800" height="450"></canvas>
+      <div id="hud">
+        <div style="display:flex; gap:8px;">
+          <div class="hud-box" id="lives">❤️❤️❤️</div>
+          <div class="hud-box" id="coin-count">🪙 0</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:flex-start;">
+          <div class="hud-box" id="level-name">Nivel 1</div>
+          <button id="mute-btn">🔊</button>
+        </div>
+      </div>
+      <div id="touch-controls">
+        <div class="dpad">
+          <div class="tbtn" id="btn-left">◀</div>
+          <div class="tbtn" id="btn-right">▶</div>
+        </div>
+        <div class="tbtn jump" id="btn-jump">⤒</div>
+      </div>
+    </div>
+
+    <!-- RESCUED SCREEN -->
+    <div class="screen hidden" id="screen-rescued">
+      <div class="stars"></div>
+      <div class="card">
+        <div class="member-badge" id="rescued-badge">?</div>
+        <h1 class="title" id="rescued-title">¡Rescatado!</h1>
+        <div class="cloud-msg" id="rescued-cloud">
+          <p class="cloud-msg-text" id="rescued-sub">—</p>
+        </div>
+      </div>
+      <button class="btn" id="btn-continue" style="margin-top:20px;">Continuar</button>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div class="screen hidden" id="screen-gameover">
+      <div class="stars"></div>
+      <div style="font-size:2rem;">💜</div>
+      <h1 class="title">No pasa nada, inténtalo otra vez</h1>
+      <p class="sub">Vamos si caes vuelves a levantarte animo</p>
+      <button class="btn" id="btn-retry">Reintentar nivel</button>
+    </div>
+
+    <!-- FINALE SCREEN: concert stage with all 7 members performing -->
+    <div class="screen hidden" id="screen-finale">
+      <canvas id="concert-canvas" width="900" height="520"></canvas>
+      <canvas id="confetti-canvas" width="900" height="520"></canvas>
+      <div class="balloons" id="balloons"></div>
+      <div class="finale-top" style="z-index:2;">
+        <div style="font-size:2.2rem; margin-bottom:2px;">🎂🎉</div>
+        <h1 class="birthday-title">¡FELIZ CUMPLEAÑOS, ANAHI!</h1>
+      </div>
+      <div class="cloud-msg finale-cloud" id="finale-cloud" style="z-index:2;">
+        <p class="cloud-msg-text" id="finale-text">—</p>
+      </div>
+      <div class="finale-bottom" style="z-index:2;">
+        <a class="song-link" href="https://www.youtube.com/results?search_query=Jungkook%20Euphoria%20official%20MV" target="_blank" rel="noopener">🎵 Escuchar "Euphoria" en YouTube</a>
+        <p class="sub" style="font-size:.72rem; color:var(--purple-light); margin:8px 0 0;">Tu mejor amigo</p>
+        <button class="btn secondary" id="btn-replay" style="margin-top:14px;">Jugar de nuevo</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
